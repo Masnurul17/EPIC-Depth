@@ -18,7 +18,7 @@
 
 </div>
 
-<p align="center"><img src="assets/figures/graphical_abstract.png" width="100%" alt="EPIC-Depth: small far heads, one small network on the node, field results"></p>
+<p align="center"><img src="graphical_abstract.png" width="100%" alt="EPIC-Depth: small far heads, one small network on the node, field results"></p>
 
 ---
 
@@ -30,13 +30,13 @@
 
 Streaming colour and depth to a server costs about 1.5 MB per 640×480 frame and moves images of people off-site. Counting on the camera node sends about 50 bytes per frame, but every frame must then fit the time, power and heat budget of a small edge GPU. Far heads are the hard case: at 16–23 m a head is 6–8 px wide, about one 8×8 cell of the point head.
 
-<p align="center"><img src="assets/figures/problem.png" width="100%" alt="Streaming vs on-device counting, head size vs distance, compute of existing counters"></p>
+<p align="center"><img src="problem.png" width="100%" alt="Streaming vs on-device counting, head size vs distance, compute of existing counters"></p>
 
 Depth tells how large a head should look at each cell: `w ≈ f · 0.22 m / z`. EPIC-Depth gives the point head this cue directly, at 1.5 % extra compute.
 
 ## Method
 
-<p align="center"><img src="assets/figures/architecture.png" width="100%" alt="EPIC-Depth architecture"></p>
+<p align="center"><img src="architecture.png" width="100%" alt="EPIC-Depth architecture"></p>
 
 | Part | What it does | Cost (640×480) |
 |---|---|---|
@@ -50,7 +50,7 @@ Depth tells how large a head should look at each cell: `w ≈ f · 0.22 m / z`. 
 
 Every new part starts as an exact identity (α = 0, zero trunk columns), so training starts from the RGB model. In code, EPIC is still called **EPFI** (`DECODER: EPFI`, `EPFI+dz`; `ENCODER: mambaout_tiny+dmid`): *EPIC was named EPFI in earlier versions.*
 
-<p align="center"><img src="assets/figures/epic_decoder.png" width="100%" alt="EPIC decoder with the depth-scale code F4"></p>
+<p align="center"><img src="epic_decoder.png" width="100%" alt="EPIC decoder with the depth-scale code F4"></p>
 
 ## Results
 
@@ -60,7 +60,7 @@ Every new part starts as an exact identity (α = 0, zero trunk columns), so trai
 - **Protocol:** every RGB-D model is pre-trained the same way on ShanghaiTechRGBDSyn (40 epochs, LR drop at 30, seed 1229, checkpoint chosen on a hold-out by the EMA window mean). APGCC and P2PNet get **the same depth stem, fusion and depth dropout** as EPIC-Depth; F₄ is part of the EPIC decoder and is not added to them. IADM runs with its official code and RGB-D weights.
 - **F1:** one-to-one matching, radius `0.5 · f · 0.22 m / z` clipped to 4–24 px (8 px where the head has no depth).
 
-<p align="center"><img src="assets/figures/field_rgbd_results.png" width="90%" alt="Field MAE and F1 of all models"></p>
+<p align="center"><img src="field_rgbd_results.png" width="90%" alt="Field MAE and F1 of all models"></p>
 
 | Model | Input | MAE | RMSE | Bias | F1 |
 |---|---|---|---|---|---|
@@ -170,14 +170,14 @@ python vis_pred_gt.py --frames field_pairs/rs_test_gt/frames --depth field_pairs
     --fx 606.5 --out runs/rs_test/compare
 python rs_block_bootstrap.py runs/rs_test/per_frame.csv --ref "EPFI-Count-D (ours)" --block 10 --n 10000
 python make_fig_assets.py --frames field_pairs/rs_test_gt/frames --depth field_pairs/rs_test_gt/depth \
-    --pred "EPIC-Depth=runs/rs_test/points/EPFI-Count-D_(ours)" --out runs/rs_test/figs   # TP / FP / FN figure
+    --pred "EPIC-Depth=runs/rs_test/points/EPFI-Count-D_(ours)" --out runs/rs_test/figs   # TP / FP / FN 
 ```
 
 `rgbd_video_test.py` also reads RealSense `.bag`, ZED `.svo2`, and colour video + 16-bit depth.
 
 ## Deploy on a Jetson
 
-<p align="center"><img src="assets/figures/pipeline.png" width="100%" alt="Training, export and the camera node"></p>
+<p align="center"><img src="pipeline.png" width="100%" alt="Training, export and the camera node"></p>
 
 ```bash
 # server: one 480x640 graph, raw BGR + raw depth (mm) in, opset 16, checked against PyTorch on real frames
