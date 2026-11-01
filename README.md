@@ -79,10 +79,10 @@ Every new part starts as an exact identity (α = 0, zero trunk columns), so trai
 | P2PNet + depth branch, depth off | RGB | Syn | – | 6.92 | – | – | – | – | – |
 | EPIC (A) | RGB | SHA | – | 8.35 | 11.54 | +6.94 | 0.488 | 0.761 | 0.595 |
 | APGCC (official weights) | RGB | SHA | – | 8.83 | 13.62 | +6.64 | 0.326 | 0.501 | 0.395 |
-| IADM (official code and weights) | RGB-D | SHTRGBD | – | 11.76 | 14.49 | −11.72 | – | – | density |
+| IADM (official code and weights) | RGB-D | SHTRGBD | – | 11.76 | 14.49 | −11.72 | – | – | –* |
 | P2PNet (official weights) | RGB | SHA | – | 12.10 | 18.47 | +9.19 | 0.236 | 0.410 | 0.299 |
 
-<sub>Syn: trained on ShanghaiTechRGBDSyn with the same schedule and selection; Syn MAE is measured on its test split (960×540), which is never used for selection. SHA: official or our weights trained on ShanghaiTech A (EPIC (A) selected on the hold-out split). SHTRGBD: official IADM weights. Depth off: zero depth map, same weights. Block bootstrap of the per-frame difference of absolute errors (blocks of 10 labelled frames, 10,000 resamples): depth lowers the error of the same weights by 0.83 heads per frame, 95 % interval [+0.62, +1.05]. Against the other counters trained on ShanghaiTechRGBDSyn, the mean per-frame difference is 1.60 (EPIC, RGB), 3.94 (APGCC + depth branch) and 6.19 (P2PNet + depth branch) heads per frame. Full tables: `results/rgbd/`.</sub>
+<sub>Syn: trained on ShanghaiTechRGBDSyn with the same schedule and selection; Syn MAE is measured on its test split (960×540), which is never used for selection. SHA: official or our weights trained on ShanghaiTech A (EPIC (A) selected on the hold-out split). SHTRGBD: official IADM weights. Depth off: zero depth map, same weights; F1 is not reported for the two comparators with depth off. \*Density map, no points. Block bootstrap of the per-frame difference of absolute errors (blocks of 10 labelled frames, 10,000 resamples): depth lowers the error of the same weights by 0.83 heads per frame, 95 % interval [+0.62, +1.05]. Against the other counters trained on ShanghaiTechRGBDSyn, the mean per-frame difference is 1.60 (EPIC, RGB), 3.94 (APGCC + depth branch) and 6.19 (P2PNet + depth branch) heads per frame. Full tables: `results/rgbd/`.</sub>
 
 **Reading.** With the same weights, depth lowers the MAE of EPIC-Depth from 1.32 to 0.49, and EPIC trained the same way without depth reaches 2.09. The same depth branch without F₄ improves APGCC only from 4.69 to 4.43 and P2PNet from 6.77 to 6.68 (5.5 % and 1.3 %, against 77 % for EPIC): the gain comes from how depth reaches the point head (F₄), not from an extra input channel. On ShanghaiTechRGBDSyn, whose depth is exact at every pixel, the counters differ much less (18.70–22.60) and APGCC without depth is best, so the advantage of EPIC-Depth is specific to small heads and incomplete depth. The error grows with the number of people (MAE per frame, by annotated heads per frame):
 
@@ -190,7 +190,7 @@ EPIC-Depth is a set of **runtime plug-ins for the official [APGCC](https://githu
 
 ```bash
 git clone https://github.com/AaronCIH/APGCC.git
-git clone https://github.com/<your-account>/EPIC-Depth.git
+git clone https://github.com/Masnurul17/EPIC-Depth.git
 conda create -n epic python=3.10 -y && conda activate epic
 pip install -r EPIC-Depth/requirements.txt          # + torch matching your CUDA
 
