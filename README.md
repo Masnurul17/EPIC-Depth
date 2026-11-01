@@ -18,7 +18,7 @@
 
 </div>
 
-<p align="center"><img src="Figure/Graphical_abstract.png" width="100%" alt="EPIC-Depth: small far heads, one small network on the node, field results"></p>
+<p align="center"><img src="Graphical_abstract.png" width="100%" alt="EPIC-Depth: small far heads, one small network on the node, field results"></p>
 
 ---
 
@@ -30,13 +30,13 @@
 
 Streaming colour and depth to a server costs 1.54 MB per 640×480 frame (921,600 B colour + 614,400 B 16-bit depth) and moves images of people off-site. Counting on the camera node sends about 50 bytes per frame (about 12 heads), but every frame must then fit the time, power and heat budget of a small edge GPU: a PoE port (IEEE 802.3af) delivers at most 12.95 W, and the Orin Nano module alone draws 9.7–11.5 W while counting. Far heads are the hard case: the heads with measured depth are at a median distance of 14.9 m and about 9 px wide, and heads at 16.0, 19.7 and 23.4 m are 8, 7 and 6 px wide, about one 8×8 cell of the point head.
 
-<p align="center"><img src="Figure/fig_problem.png" width="100%" alt="Streaming vs on-device counting, head size vs distance, compute of existing counters"></p>
+<p align="center"><img src="fig_problem.png" width="100%" alt="Streaming vs on-device counting, head size vs distance, compute of existing counters"></p>
 
 Depth tells how large a head should look at each cell: `w ≈ f · 0.22 m / z` (f = 606.5 px). EPIC-Depth gives the point head this cue directly, at 1.5 % extra compute (0.39 GMACs).
 
 ## Method
 
-<p align="center"><img src="Figure/fig_architecture.png" width="100%" alt="EPIC-Depth architecture"></p>
+<p align="center"><img src="fig_architecture.png" width="100%" alt="EPIC-Depth architecture"></p>
 
 | Part | What it does | Cost (640×480) |
 |---|---|---|
@@ -54,7 +54,7 @@ Every new part starts as an exact identity (α = 0, zero trunk columns), so trai
 
 **Deployment rewrite.** For TensorRT, the trained network is rewritten without changing its function beyond floating-point rounding: (i) Gated CNN blocks in channels-first layout with the linear layers as 1×1 convolutions, (ii) LayerNorm affine terms folded into the following linear layer, (iii) each LayerNorm evaluated on `x/2ᵏ` with `ε/4ᵏ`, so the variance stays inside the FP16 range (`k` per layer from training-frame activations, fixed at export), (iv) one 480×640 frame instead of two 512×512 tiles, (v) raw BGR and raw depth in mm enter the graph. In FP32 the encoder features differ by at most 2.7×10⁻⁶, and the counts of the original model, the rewritten model and the ONNX graph are identical on ten frames of the field recording.
 
-<p align="center"><img src="Figure/figS_epfi.png" width="100%" alt="EPIC decoder with the depth-scale code F4"></p>
+<p align="center"><img src="figS_epfi.png" width="100%" alt="EPIC decoder with the depth-scale code F4"></p>
 
 ## Results
 
@@ -64,7 +64,7 @@ Every new part starts as an exact identity (α = 0, zero trunk columns), so trai
 - **Training:** all models are trained on public data only. The RGB-D models are trained on ShanghaiTechRGBDSyn resized by 0.5 (960×540): 40 epochs, LR ×0.1 after epoch 30, depth dropout p = 0.2, EMA 0.999, seed 1229, checkpoint with the lowest mean MAE over 10 consecutive epochs on a scene-level 10 % hold-out. Initialisation: EPIC-Depth and EPIC from EPIC trained on UCF-QNRF, APGCC from its official ShanghaiTech A weights, the P2PNet-style counter from ImageNet. APGCC and P2PNet get **the same depth stem, fusion and depth dropout** as EPIC-Depth (0.163 M, 0.48 GMACs on VGG-16) and are also trained without it; F₄ is part of the EPIC decoder and is not added to them. IADM runs with its official code and RGB-D weights (ShanghaiTechRGBD).
 - **Metrics:** MAE, RMSE and bias of the per-frame count. P, R and F1: one-to-one matching, radius `0.5 · f · 0.22 m / z` clipped to 4–24 px (8 px where the head has no depth); with a head width of 0.16 or 0.28 m instead of 0.22 m, the ranking of all counters is unchanged and F1 changes by at most 0.010.
 
-<p align="center"><img src="Figure/figS_field_rgbd.png" width="90%" alt="Field MAE and F1 of all models"></p>
+<p align="center"><img src="figS_field_rgbd.png" width="90%" alt="Field MAE and F1 of all models"></p>
 
 | Model | Input | Training | Syn MAE | MAE | RMSE | Bias | P | R | F1 |
 |---|---|---|---|---|---|---|---|---|---|
@@ -147,7 +147,7 @@ One 480×640 forward per frame, raw BGR + raw depth (mm) in, normalisation on th
 
 <sub>ΔMAE₁₆: FP16 minus FP32 MAE of the same model on the 139 labelled frames. †FP16 engine rejected (|ΔMAE₁₆| above 20 % of the FP32 MAE), also with the depth input set to zero. Power is compared only within a device. With a zero depth map, the same EPIC-Depth engine needs 14.3 ms, 23.0 W and 0.329 J per frame on the AGX Orin and 0.372 J on the Orin Nano. `deploy/rgbd_table5.py` builds both tables and the accuracy-vs-energy figure from the run folders.</sub>
 
-Accuracy versus energy on both devices (Fig. 5 of the paper): [`Figure/fig_acc_eff.pdf`](Figure/fig_acc_eff.pdf).
+Accuracy versus energy on both devices (Fig. 5 of the paper): [`fig_acc_eff.pdf`](fig_acc_eff.pdf).
 
 <details>
 <summary><b>MAE of every engine on the 139 labelled frames</b></summary>
@@ -247,7 +247,7 @@ python make_fig_assets.py --frames field_pairs/rs_test_gt/frames --depth field_p
 
 ## Deploy on a Jetson
 
-<p align="center"><img src="Figure/fig_pipeline.png" width="100%" alt="Training, export and the camera node"></p>
+<p align="center"><img src="fig_pipeline.png" width="100%" alt="Training, export and the camera node"></p>
 
 ```bash
 # server: one 480x640 graph, raw BGR + raw depth (mm) in, opset 16, checked against PyTorch on real frames
@@ -287,8 +287,8 @@ EPIC-Depth/
 ├── tools/           block bootstrap, K-cell statistics, README charts
 ├── results/rgbd/    RGB-D field results, bootstrap, params / GMACs, Jetson runs
 ├── results/rgb/     RGB results (field videos V1–V4, ShanghaiTech ledger)
-├── Figure/          figures of the paper (same file names as in the article)
-└── assets/          README charts of the RGB videos
+├── assets/          README charts of the RGB videos
+└── *.png, *.pdf     figures of the paper, same file names as in the article
 ```
 
 ## Limitations
