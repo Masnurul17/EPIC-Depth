@@ -64,7 +64,7 @@ Every new part starts as an exact identity (α = 0, zero trunk columns), so trai
 - **Training:** all models are trained on public data only. The RGB-D models are trained on ShanghaiTechRGBDSyn resized by 0.5 (960×540): 40 epochs, LR ×0.1 after epoch 30, depth dropout p = 0.2, EMA 0.999, seed 1229, checkpoint with the lowest mean MAE over 10 consecutive epochs on a scene-level 10 % hold-out. Initialisation: EPIC-Depth and EPIC from EPIC trained on UCF-QNRF, APGCC from its official ShanghaiTech A weights, the P2PNet-style counter from ImageNet. APGCC and P2PNet get **the same depth stem, fusion and depth dropout** as EPIC-Depth (0.163 M, 0.48 GMACs on VGG-16) and are also trained without it; F₄ is part of the EPIC decoder and is not added to them. IADM runs with its official code and RGB-D weights (ShanghaiTechRGBD).
 - **Metrics:** MAE, RMSE and bias of the per-frame count. P, R and F1: one-to-one matching, radius `0.5 · f · 0.22 m / z` clipped to 4–24 px (8 px where the head has no depth); with a head width of 0.16 or 0.28 m instead of 0.22 m, the ranking of all counters is unchanged and F1 changes by at most 0.010.
 
-<p align="center"><img src="figS_field_rgbd.png" width="90%" alt="Field MAE and F1 of all models"></p>
+<p align="center"><img src="figS_field_rgbd-2.png" width="90%" alt="Field MAE and F1 of all models"></p>
 
 | Model | Input | Training | Syn MAE | MAE | RMSE | Bias | P | R | F1 |
 |---|---|---|---|---|---|---|---|---|---|
