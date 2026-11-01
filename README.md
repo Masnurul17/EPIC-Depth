@@ -1,5 +1,3 @@
-# EPIC-Depth
-
 <div align="center">
 
 # EPIC-Depth
